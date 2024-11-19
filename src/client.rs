@@ -34,7 +34,7 @@ fn main() {
         .add_plugins(DefaultPlugins.set(WindowPlugin {
             primary_window: Some(Window {
                 title: "Pong".into(),
-                resolution: WindowResolution::new(800., 800.),
+                resolution: WindowResolution::new(800., 600.),
                 ..Default::default()
             }),
             ..Default::default()
@@ -45,7 +45,7 @@ fn main() {
 }
 
 fn setup(mut commands: Commands) {
-    commands.spawn_empty().insert(Camera2dBundle::default());
+    commands.spawn(Camera2dBundle::default());
 
     commands
         .spawn(SpriteBundle {
