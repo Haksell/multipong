@@ -138,11 +138,11 @@ fn game_state_system(network: Res<NetworkResource>, mut query: Query<(&Paddle, &
 
     if let Some(game_state) = state_option {
         for (paddle, mut transform) in query.iter_mut() {
-            if paddle.is_left {
-                transform.translation.y = game_state.left_paddle_y;
+            transform.translation.y = if paddle.is_left {
+                game_state.left_paddle_y
             } else {
-                transform.translation.y = game_state.right_paddle_y;
-            }
+                game_state.right_paddle_y
+            };
         }
     }
 }
