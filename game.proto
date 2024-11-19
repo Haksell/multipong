@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+package game;
+
+service GameService {
+    rpc Play(stream GameMessage) returns (stream GameMessage);
+}
+
+message GameMessage {
+    oneof message {
+        ControlInput control_input = 1;
+        GameState game_state = 2;
+    }
+}
+
+message ControlInput {
+    int32 player_id = 1;
+    Direction direction = 2;
+}
+
+message GameState {
+    float left_paddle_y = 1;
+    float right_paddle_y = 2;
+}
+
+enum Direction {
+    NONE = 0;
+    UP = 1;
+    DOWN = 2;
+}
