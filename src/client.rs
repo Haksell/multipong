@@ -35,7 +35,6 @@ fn main() {
             }),
             ..Default::default()
         }))
-        // .init_resource(PlayerId(player_id))
         .add_systems(Startup, (setup, network_setup))
         .add_systems(Update, (paddle_input_system, game_state_system))
         .run();
@@ -44,7 +43,6 @@ fn main() {
 fn setup(mut commands: Commands) {
     commands.spawn_empty().insert(Camera2dBundle::default());
 
-    // Left paddle
     commands
         .spawn(SpriteBundle {
             sprite: Sprite {
@@ -57,7 +55,6 @@ fn setup(mut commands: Commands) {
         })
         .insert(Paddle { is_left: true });
 
-    // Right paddle
     commands
         .spawn(SpriteBundle {
             sprite: Sprite {
@@ -112,11 +109,9 @@ fn paddle_input_system(
     keyboard_input: Res<ButtonInput<KeyCode>>,
     network: ResMut<NetworkResource>,
 ) {
-    let direction = if keyboard_input.pressed(KeyCode::KeyW)
-        || keyboard_input.pressed(KeyCode::ArrowUp)
-    {
+    let direction = if keyboard_input.pressed(KeyCode::ArrowUp) {
         Direction::Up
-    } else if keyboard_input.pressed(KeyCode::KeyS) || keyboard_input.pressed(KeyCode::ArrowDown) {
+    } else if keyboard_input.pressed(KeyCode::ArrowDown) {
         Direction::Down
     } else {
         Direction::None

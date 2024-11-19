@@ -1,5 +1,5 @@
 [package]
-name = "new_pong"
+name = "multipong"
 version = "0.1.0"
 edition = "2021"
 
