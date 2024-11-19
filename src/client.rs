@@ -1,22 +1,26 @@
-use bevy::prelude::*;
-use bevy::window::WindowResolution;
-use futures::StreamExt;
-use game::game_message::Message;
-use std::sync::{Arc, Mutex};
-use std::thread;
-use tokio::sync::mpsc;
-use tokio_stream::wrappers::UnboundedReceiverStream;
+// TODO: give random paddle to player
+// TODO: make game work
 
 pub mod game {
     tonic::include_proto!("game");
 }
 
-use game::game_service_client::GameServiceClient;
-use game::{ControlInput, Direction, GameMessage, GameState};
+use bevy::{prelude::*, window::WindowResolution};
+use futures::StreamExt;
+use game::{
+    game_message::Message, game_service_client::GameServiceClient, ControlInput, Direction,
+    GameMessage, GameState,
+};
+use std::{
+    sync::{Arc, Mutex},
+    thread,
+};
+use tokio::sync::mpsc::{self, UnboundedSender};
+use tokio_stream::wrappers::UnboundedReceiverStream;
 
 #[derive(Resource)]
 struct NetworkResource {
-    sender: mpsc::UnboundedSender<GameMessage>,
+    sender: UnboundedSender<GameMessage>,
     game_state: Arc<Mutex<Option<GameState>>>,
 }
 

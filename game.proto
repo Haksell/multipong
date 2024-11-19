@@ -6,6 +6,7 @@ service GameService {
     rpc Play(stream GameMessage) returns (stream GameMessage);
 }
 
+// TODO: no oneof
 message GameMessage {
     oneof message {
         ControlInput control_input = 1;
