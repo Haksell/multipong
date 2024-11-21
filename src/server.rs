@@ -6,12 +6,14 @@ use futures::Stream;
 use game::{
     game_message::Message,
     game_service_server::{GameService, GameServiceServer},
-    Direction, GameMessage, GameState,
+    GameMessage, GameState,
 };
 use std::{pin::Pin, sync::Arc};
 use tokio::sync::{mpsc, Mutex};
 use tokio_stream::wrappers::ReceiverStream;
 use tonic::{transport::Server, Request, Response, Status};
+
+const SPEED: f32 = 5.0;
 
 type GameMessageStream = Pin<Box<dyn Stream<Item = Result<GameMessage, Status>> + Send>>;
 
@@ -49,13 +51,8 @@ impl GameService for GameServer {
             while let Ok(Some(game_msg)) = stream.message().await {
                 if let Some(Message::ControlInput(control_input)) = game_msg.message {
                     let mut state = state.lock().await;
-                    match Direction::try_from(control_input.direction) {
-                        Ok(Direction::Up) => state.y += 5.0,
-                        Ok(Direction::Right) => state.x += 5.0,
-                        Ok(Direction::Down) => state.y -= 5.0,
-                        Ok(Direction::Left) => state.x -= 5.0,
-                        _ => (),
-                    };
+                    state.x += SPEED * control_input.dx;
+                    state.y += SPEED * control_input.dy;
 
                     let game_state = GameMessage {
                         message: Some(Message::GameState(GameState {

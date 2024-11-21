@@ -16,18 +16,11 @@ message GameMessage {
 
 message ControlInput {
     int32 player_id = 1;
-    Direction direction = 2;
+    float dx = 2;
+    float dy = 3;
 }
 
 message GameState {
     float x = 1;
     float y = 2;
-}
-
-enum Direction {
-    NONE = 0;
-    UP = 1;
-    RIGHT = 2;
-    DOWN = 3;
-    LEFT = 4;
 }
