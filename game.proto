@@ -14,7 +14,7 @@ message GameMessage {
 }
 
 message ControlInput {
-    int32 player_id = 1;
+    uint32 player_id = 1;
     float dx = 2;
     float dy = 3;
 }
@@ -24,7 +24,7 @@ message GameState {
 }
 
 message Player {
-    int32 player_id = 1;
+    uint32 player_id = 1;
     float x = 2;
     float y = 3;
 }

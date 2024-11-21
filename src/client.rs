@@ -20,13 +20,13 @@ use tokio_stream::wrappers::UnboundedReceiverStream;
 #[derive(Resource)]
 struct NetworkResource {
     sender: UnboundedSender<GameMessage>,
-    game_state: Arc<Mutex<HashMap<i32, Player>>>,
-    player_id: Arc<Mutex<Option<i32>>>,
+    game_state: Arc<Mutex<HashMap<u32, Player>>>,
+    player_id: Arc<Mutex<Option<u32>>>,
 }
 
 #[derive(Component)]
 struct PlayerSquare {
-    player_id: i32,
+    player_id: u32,
 }
 
 const SIZE: f32 = 42.;
@@ -35,7 +35,7 @@ fn main() {
     App::new()
         .add_plugins(DefaultPlugins.set(WindowPlugin {
             primary_window: Some(Window {
-                title: "Multiplayer Game".into(),
+                title: "multipong".into(),
                 resolution: WindowResolution::new(480., 480.),
                 ..Default::default()
             }),
@@ -87,7 +87,7 @@ fn network_setup(mut commands: Commands) {
                         state.insert(player.player_id, player);
                     }
 
-                    let received_ids: Vec<i32> = game_state_msg
+                    let received_ids: Vec<u32> = game_state_msg
                         .clone()
                         .players
                         .iter()
@@ -104,7 +104,7 @@ fn network_setup(mut commands: Commands) {
     });
 }
 
-fn player_id_from_state(state: &HashMap<i32, Player>) -> i32 {
+fn player_id_from_state(state: &HashMap<u32, Player>) -> u32 {
     *state.keys().max().unwrap()
 }
 
@@ -145,7 +145,7 @@ fn game_state_system(
 
     let player_id = network.player_id.lock().unwrap();
 
-    let mut existing_players: HashMap<i32, Entity> = HashMap::new();
+    let mut existing_players: HashMap<u32, Entity> = HashMap::new();
     for (entity, _, player_square) in query.iter_mut() {
         existing_players.insert(player_square.player_id, entity);
     }

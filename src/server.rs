@@ -19,9 +19,9 @@ type GameMessageStream = Pin<Box<dyn Stream<Item = Result<GameMessage, Status>> 
 
 #[derive(Debug, Default)]
 struct SharedGameState {
-    players: HashMap<i32, Player>,
-    clients: HashMap<i32, mpsc::Sender<Result<GameMessage, Status>>>,
-    next_player_id: i32,
+    players: HashMap<u32, Player>,
+    clients: HashMap<u32, mpsc::Sender<Result<GameMessage, Status>>>,
+    next_player_id: u32,
 }
 
 #[derive(Debug, Default)]
