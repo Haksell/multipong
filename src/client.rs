@@ -26,7 +26,9 @@ struct NetworkResource {
 }
 
 #[derive(Component)]
-struct Paddle;
+struct Circle;
+
+const SIZE: f32 = 42.;
 
 fn main() {
     App::new()
@@ -39,7 +41,7 @@ fn main() {
             ..Default::default()
         }))
         .add_systems(Startup, (setup, network_setup))
-        .add_systems(Update, (paddle_input_system, game_state_system))
+        .add_systems(Update, (circle_input_system, game_state_system))
         .run();
 }
 
@@ -50,13 +52,13 @@ fn setup(mut commands: Commands) {
         .spawn(SpriteBundle {
             sprite: Sprite {
                 color: Color::WHITE,
-                custom_size: Some(Vec2::new(10., 100.)),
+                custom_size: Some(Vec2::new(SIZE, SIZE)),
                 ..Default::default()
             },
-            transform: Transform::from_xyz(-380., 0., 0.),
+            transform: Transform::from_xyz(SIZE / 2.0, SIZE / 2.0, 0.),
             ..Default::default()
         })
-        .insert(Paddle {});
+        .insert(Circle);
 }
 
 fn network_setup(mut commands: Commands) {
@@ -96,7 +98,7 @@ fn network_setup(mut commands: Commands) {
     });
 }
 
-fn paddle_input_system(
+fn circle_input_system(
     keyboard_input: Res<ButtonInput<KeyCode>>,
     network: ResMut<NetworkResource>,
 ) {
@@ -124,7 +126,7 @@ fn paddle_input_system(
     let _ = network.sender.send(game_message);
 }
 
-fn game_state_system(network: Res<NetworkResource>, mut query: Query<(&Paddle, &mut Transform)>) {
+fn game_state_system(network: Res<NetworkResource>, mut query: Query<(&Circle, &mut Transform)>) {
     let state_option = { network.game_state.lock().unwrap().clone() };
 
     if let Some(game_state) = state_option {

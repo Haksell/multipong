@@ -64,6 +64,8 @@ impl GameService for GameServer {
                         })),
                     };
 
+                    println!("{game_state:?}");
+
                     for client in &state.clients {
                         let _ = client.send(Ok(game_state.clone())).await;
                     }
