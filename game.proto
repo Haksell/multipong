@@ -20,12 +20,14 @@ message ControlInput {
 }
 
 message GameState {
-    float left_paddle_y = 1;
-    float right_paddle_y = 2;
+    float x = 1;
+    float y = 2;
 }
 
 enum Direction {
     NONE = 0;
     UP = 1;
-    DOWN = 2;
+    RIGHT = 2;
+    DOWN = 3;
+    LEFT = 4;
 }

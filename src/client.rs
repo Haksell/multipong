@@ -1,5 +1,6 @@
-// TODO: give random paddle to player
+// TODO: multiplayer
 // TODO: make game work
+// TODO: diagonal directions
 
 pub mod game {
     tonic::include_proto!("game");
@@ -25,16 +26,14 @@ struct NetworkResource {
 }
 
 #[derive(Component)]
-struct Paddle {
-    is_left: bool,
-}
+struct Paddle;
 
 fn main() {
     App::new()
         .add_plugins(DefaultPlugins.set(WindowPlugin {
             primary_window: Some(Window {
                 title: "Pong".into(),
-                resolution: WindowResolution::new(800., 600.),
+                resolution: WindowResolution::new(640., 480.),
                 ..Default::default()
             }),
             ..Default::default()
@@ -57,19 +56,7 @@ fn setup(mut commands: Commands) {
             transform: Transform::from_xyz(-380., 0., 0.),
             ..Default::default()
         })
-        .insert(Paddle { is_left: true });
-
-    commands
-        .spawn(SpriteBundle {
-            sprite: Sprite {
-                color: Color::WHITE,
-                custom_size: Some(Vec2::new(10., 100.)),
-                ..Default::default()
-            },
-            transform: Transform::from_xyz(380., 0., 0.),
-            ..Default::default()
-        })
-        .insert(Paddle { is_left: false });
+        .insert(Paddle {});
 }
 
 fn network_setup(mut commands: Commands) {
@@ -115,8 +102,12 @@ fn paddle_input_system(
 ) {
     let direction = if keyboard_input.pressed(KeyCode::ArrowUp) {
         Direction::Up
+    } else if keyboard_input.pressed(KeyCode::ArrowRight) {
+        Direction::Right
     } else if keyboard_input.pressed(KeyCode::ArrowDown) {
         Direction::Down
+    } else if keyboard_input.pressed(KeyCode::ArrowLeft) {
+        Direction::Left
     } else {
         Direction::None
     };
@@ -137,12 +128,9 @@ fn game_state_system(network: Res<NetworkResource>, mut query: Query<(&Paddle, &
     let state_option = { network.game_state.lock().unwrap().clone() };
 
     if let Some(game_state) = state_option {
-        for (paddle, mut transform) in query.iter_mut() {
-            transform.translation.y = if paddle.is_left {
-                game_state.left_paddle_y
-            } else {
-                game_state.right_paddle_y
-            };
+        for (_, mut transform) in query.iter_mut() {
+            transform.translation.x = game_state.x;
+            transform.translation.y = game_state.y;
         }
     }
 }

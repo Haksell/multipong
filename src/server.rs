@@ -17,8 +17,8 @@ type GameMessageStream = Pin<Box<dyn Stream<Item = Result<GameMessage, Status>> 
 
 #[derive(Debug, Default)]
 struct SharedGameState {
-    left_paddle_y: f32,
-    right_paddle_y: f32,
+    x: f32,
+    y: f32,
     clients: Vec<mpsc::Sender<Result<GameMessage, Status>>>,
 }
 
@@ -49,24 +49,18 @@ impl GameService for GameServer {
             while let Ok(Some(game_msg)) = stream.message().await {
                 if let Some(Message::ControlInput(control_input)) = game_msg.message {
                     let mut state = state.lock().await;
-                    match control_input.player_id {
-                        1 => match Direction::try_from(control_input.direction) {
-                            Ok(Direction::Up) => state.left_paddle_y += 5.0,
-                            Ok(Direction::Down) => state.left_paddle_y -= 5.0,
-                            _ => (),
-                        },
-                        2 => match Direction::try_from(control_input.direction) {
-                            Ok(Direction::Up) => state.right_paddle_y += 5.0,
-                            Ok(Direction::Down) => state.right_paddle_y -= 5.0,
-                            _ => (),
-                        },
+                    match Direction::try_from(control_input.direction) {
+                        Ok(Direction::Up) => state.y += 5.0,
+                        Ok(Direction::Right) => state.x += 5.0,
+                        Ok(Direction::Down) => state.y -= 5.0,
+                        Ok(Direction::Left) => state.x -= 5.0,
                         _ => (),
-                    }
+                    };
 
                     let game_state = GameMessage {
                         message: Some(Message::GameState(GameState {
-                            left_paddle_y: state.left_paddle_y,
-                            right_paddle_y: state.right_paddle_y,
+                            x: state.x,
+                            y: state.y,
                         })),
                     };
 
