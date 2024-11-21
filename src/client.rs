@@ -28,7 +28,7 @@ struct NetworkResource {
 #[derive(Component)]
 struct Square;
 
-const SIZE: f32 = 200.;
+const SIZE: f32 = 42.;
 
 fn main() {
     App::new()
