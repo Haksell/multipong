@@ -1,17 +1,17 @@
-use futures::Stream;
-use game::game_message::Message;
-use std::pin::Pin;
-use std::sync::Arc;
-use tokio::sync::{mpsc, Mutex};
-use tokio_stream::wrappers::ReceiverStream;
-use tonic::{transport::Server, Request, Response, Status};
-
 pub mod game {
     tonic::include_proto!("game");
 }
 
-use game::game_service_server::{GameService, GameServiceServer};
-use game::{Direction, GameMessage, GameState};
+use futures::Stream;
+use game::{
+    game_message::Message,
+    game_service_server::{GameService, GameServiceServer},
+    Direction, GameMessage, GameState,
+};
+use std::{pin::Pin, sync::Arc};
+use tokio::sync::{mpsc, Mutex};
+use tokio_stream::wrappers::ReceiverStream;
+use tonic::{transport::Server, Request, Response, Status};
 
 type GameMessageStream = Pin<Box<dyn Stream<Item = Result<GameMessage, Status>> + Send>>;
 
@@ -64,7 +64,7 @@ impl GameService for GameServer {
                     }
 
                     let game_state = GameMessage {
-                        message: Some(game::game_message::Message::GameState(GameState {
+                        message: Some(Message::GameState(GameState {
                             left_paddle_y: state.left_paddle_y,
                             right_paddle_y: state.right_paddle_y,
                         })),
